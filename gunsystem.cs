@@ -8,23 +8,23 @@ public class gunsystem : MonoBehaviour {
    
     public AudioSource audioSource;
     
-    public Animator m_animator;// 총의 애니메이터
-    public Transform m_FireTransform;//총구 위치 트랜스폼
-    public ParticleSystem m_ShellEjectEffect;//탄피 배출 효과 재생기
-    public ParticleSystem m_MuzzleFlashEffect; //총구 화염 효과 재생기
-    public AudioClip m_Shotclip;//발사소리
-    public AudioClip m_nonamo;//
-    public AudioSource m_GunAudioPlayer;//총 소리 재생기
-    public AudioClip m_Reloadclip;//발사소리
+    public Animator m_animator;
+    public Transform m_FireTransform;
+    public ParticleSystem m_ShellEjectEffect;
+    public ParticleSystem m_MuzzleFlashEffect; 
+    public AudioClip m_Shotclip;
+    public AudioClip m_nonamo;
+    public AudioSource m_GunAudioPlayer;
+    public AudioClip m_Reloadclip;
   
    
 
-    public GameObject m_ImpactPrefab;//피탄 장소에 생성할 이펙트
+    public GameObject m_ImpactPrefab;
 
-    public Text m_AmmoTEXT; // 남은 탄호나수 UI
+    public Text m_AmmoTEXT; 
 
     public int m_MaxAmmo = 12;
-    public float m_TimeBetFire = 0.3f;//발사지연
+    public float m_TimeBetFire = 0.3f;
 
     public float m_Damage = 100;
     public float m_ReloadTime = 2.0f;
@@ -32,9 +32,9 @@ public class gunsystem : MonoBehaviour {
 
 
     private enum State { ready, Empty ,Reloading };
-    private State m_CurrentState = State.Empty; // 현재 총의 상태
-    private float m_LastFireTime; // 총을 마지막으로 발사한 시점
-    private int m_CurrentAmmo = 12;// 탄창에 남은 현재 탄약 개수
+    private State m_CurrentState = State.Empty; 
+    private float m_LastFireTime; 
+    private int m_CurrentAmmo = 999;
 
     private int layerMask;
 
@@ -44,7 +44,7 @@ public class gunsystem : MonoBehaviour {
 
        
 
-        UpdateUI(); //ui를 갱신
+        UpdateUI(); 
 
 
 
@@ -81,21 +81,21 @@ public class gunsystem : MonoBehaviour {
         {
 
 
-            m_LastFireTime = Time.time;//마지막으로 총을 쏜 시점이 현재 시점으로 갱신
+            m_LastFireTime = Time.time;
                 Shot();
                 
         }
     }
     private void Shot()
     {
-        //실제 발사;
+        
         RaycastHit hit;// 충돌정보 컨테이너 
-        Vector3 hitPosition = m_FireTransform.position + m_FireTransform.forward * m_FireDistance; //총알 맞는곳 ; 총구위치 + 총구 위치로 앞쪽 방향 * 사정거리
+        Vector3 hitPosition = m_FireTransform.position + m_FireTransform.forward * m_FireDistance; 총구위치 + 총구 위치로 앞쪽 방향 * 사정거리
         
         
-        m_CurrentAmmo--;//남은 탄환수 -1
+        m_CurrentAmmo--;
 
-        if (m_CurrentAmmo <= 0)//탄환수가 0 이면 
+        if (m_CurrentAmmo <= 0)
         {
             m_CurrentState = State.Empty;
             m_GunAudioPlayer.clip = m_Shotclip;
@@ -104,18 +104,18 @@ public class gunsystem : MonoBehaviour {
 
         if (m_GunAudioPlayer.clip != m_Shotclip)//
         {
-            m_GunAudioPlayer.clip = m_Shotclip;//총 발사 소리 장전
+            m_GunAudioPlayer.clip = m_Shotclip;
         }
-        m_GunAudioPlayer.Play();// 총격 소리 재생
-        m_animator.SetTrigger("shot");//fire 트리거 당김
-        m_MuzzleFlashEffect.Play();//총구화염
-        m_ShellEjectEffect.Play();//탄피
+        m_GunAudioPlayer.Play();
+        m_animator.SetTrigger("shot");
+        m_MuzzleFlashEffect.Play();
+        m_ShellEjectEffect.Play();
 
         
 
 
 
-        //레이케스트 (시작지점 , 방향, 총돌정보 컨테이너 , 사정거리)
+        //(시작지점 , 방향, 총돌정보 컨테이너 , 사정거리)
         if ( Physics.Raycast(m_FireTransform.position,m_FireTransform.forward, out hit, Mathf.Infinity, layerMask))
          {
 
@@ -129,19 +129,19 @@ public class gunsystem : MonoBehaviour {
                 target.OnDamage(m_Damage );
             }
 
-            //충돌위치 가져오기
+            
             hitPosition = hit.point;
             StartCoroutine(ShotEffect(hitPosition));
            
-            //파탄효과
+            
             GameObject decal  = Instantiate(m_ImpactPrefab, hitPosition, Quaternion.LookRotation(hit.normal));
 
             decal.transform.SetParent(hit.collider.transform);
         }
-       //발사이펙트 재생 시작
+       
        
     }
-    //발사 이펙트를 재생하고 총알 궤적을 잠시 그렸다가 끄는 함수 
+   
     private IEnumerator ShotEffect(Vector3 hitPosition)
     {
        
@@ -151,7 +151,7 @@ public class gunsystem : MonoBehaviour {
        
         
     }
-    //총의 탄약 리플레쉬
+    
     private void UpdateUI()
     {
         if (m_CurrentState == State.Empty)
